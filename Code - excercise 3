@@ -1,0 +1,65 @@
+# zadanie 1
+# Znormalizować biblioteki dla tkanek: liść, kwiat, pęd za pomocą algorytmu TPM.  • utworzyć wektory: liść_TPM,
+# ped_TPM, kwiat_TPM • utworzyć tabele: dane_TPM • podać liczbę wymiarów tabeli dane_TPM
+
+dane_RNAseq=read.csv("C:/Users/Justyna/Downloads/counts.txt",sep = "\t")
+dane_RNAseq                     
+kwiat = dane_RNAseq$bam.flower.bam/dane_RNAseq$Length
+ped = dane_RNAseq$bam.stem.bam/dane_RNAseq$Length
+lisc = dane_RNAseq$bam.leaf.bam/dane_RNAseq$Length
+
+kwiat_TPM = kwiat / sum(kwiat) * 1000000 #1e6
+ped_TPM= ped / sum(ped) * 1000000
+lisc_TPM= lisc / sum(lisc) * 1000000
+
+kwiat_TPM
+ped_TPM
+lisc_TPM
+
+dane_TPM=data.frame(kwiat_TPM,ped_TPM,lisc_TPM, dane_RNAseq$Geneid)
+dim(dane_TPM)
+
+# zadanie 2
+# Przefiltrować dane dane_TPM wybierając tylko geny z grupy MYB (na podstawie pliku MYB.txt) • utworzyć tabele dane_myb z informacją o
+# ekspresją genów MYB w tkankach: liść, pęd, kwiat • podać liczbę wymiarów tabeli dane_myb
+
+# sposob z funkcja merge/filter
+myb <- read.csv("C:/Users/Justyna/Downloads/MYB.txt", sep = "\t", header = T)
+names(dane_TPM)[4] <- "Locus"
+merged = merge(myb, dane_TPM, by = "Locus")
+dane_myb <- data.frame(merged$Locus, merged$kwiat_TPM, merged$ped_TPM, merged$lisc_TPM)
+names(dane_myb) = c("Locus", "kwiat", "p?d", "li??")
+head(dane_myb)
+dim(dane_myb)
+
+# zadanie 3 
+# Przefiltrować dane z tabeli dane_TPM, aby uzyskać tabele z genami CEN-like oraz MYB. • Utworzyć tabelę dane_myb z informacją o
+# ekspresją genów MYB oraz CEN w tkankach: liść, pęd, kwiat. • Podać liczbę wymiarów tabeli dane_myb
+
+CEN <- read.csv("C:/Users/Justyna/Downloads/CEN.txt", sep = "\t", header = T)
+dane_CEN = rbind(myb, CEN)
+dim(dane_CEN)
+dane_cen_tpm = merge(dane_CEN, dane_TPM, by="Locus")
+
+dane_cen_tpm_myb = data.frame(dane_cen_tpm$Locus, dane_cen_tpm$kwiat_TPM, dane_cen_tpm$ped_TPM, dane_cen_tpm$lisc_TPM)
+names(dane_cen_tpm_myb) = c("Locus","kwiat","ped","lisc")
+head(dane_cen_tpm_myb)
+dim(dane_cen_tpm_myb)
+
+# zadanie 4 
+# Utworzyć heatmapę ilustrującą poziome ekspresji genów z tabeli dane_myb (zadanie 3) w tkankach liścia, kwiatu i pędu. Zastosować
+# skalowanie danych za pomocą funkcji log2.
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+install.packages("BiocManager")
+BiocManager::install("ComplexHeatmap")
+
+library(ComplexHeatmap)
+dane_myb_s <- log2(t(as.matrix(dane_cen_tpm_myb[,c(2:4)]+1)))
+dane_myb_s <- t(dane_myb_s)
+row.names(dane_myb_s) <- dane_cen_tpm_myb$Locus
+dane_myb_s1 <- na.omit(dane_myb_s)
+Heatmap(dane_myb_s1, cluster_columns=FALSE,
+        row_names_side = "left",
+        row_dend_sid = "left",
+        row_names_gp=gpar(cex=0.6))
