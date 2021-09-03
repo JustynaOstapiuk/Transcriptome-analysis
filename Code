@@ -1,4 +1,4 @@
-mydata <-read.csv("C:/Users/Justyna/Desktop/STUDIA - BIOINFORMATYKA/SEMESTR II - bioinformatyka/ANALIZA TRANSKRYPTOMU/cw2_data.txt", sep = "\t", header = F)
+mydata <-read.csv("C:/Users/Justyna/Desktop/ANALIZA TRANSKRYPTOMU/data.txt", sep = "\t", header = F)
 head(mydata)
 names(mydata)[1:4] <- c('chrom', 'start', 'stop', 'typ')
 head(mydata)
