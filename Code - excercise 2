@@ -1,0 +1,36 @@
+# Wykres słupkowy przedstawiający liczebność genów z przypisanymi numerami GO: GO:0009607; GO:0006952; GO:0055114
+# w genomie (poszczególnych chromosomach) ziemniaka. 
+
+ano.info=read.csv("/home/Justyna/Pulpit/Analiza_transkryptomu/Stuberosum_448_v4.03.annotation_info.txt",sep='\t')
+gff=read.csv("/home/Justyna/Pulpit/Analiza_transkryptomu/Stuberosum_448_v4.03.gene.gff3", sep = "\t",skip = 3, header=F)
+
+#usuwam wszystko co nie jest genem
+geny<- filter(gff,V3 == "gene")
+#View(geny)
+
+GO_3=filter(ano.info, grepl("GO:0009607|GO:0006952|GO:0055114", GO))
+#head(GO_3)
+#View(GO_3)
+
+v9 = geny$V9
+geny$V99 = substr(v9, start =4, stop = 23)
+
+dane <- data.frame(ID=ano.info$locusName, GO=ano.info$GO)
+dane2 <- data.frame(chr=geny$V1, ID=geny$V99)                   
+merged <- merge(dane,dane2, by='ID', all = T)
+merged <- merged[!duplicated(merged$ID),]
+arrange(merged,V1)
+G1 <- merged[grep('GO:0009607', merged$GO),]
+G1$GO='GO:0009607'
+G2 <- merged[grep('GO:0006952', merged$GO),]
+G2$GO='GO:0006952'
+G3 <- merged[grep('GO:0055114', merged$GO),]
+G3$GO <- 'GO:0055114'
+merged <- rbind(G1,G2,G3)
+library(ggplot2)
+ggplot(merged, aes(x=chr, fill=GO))+geom_bar()+labs(x='Chromosom', y='Liczba
+wystąpień', title='Ilośc genów w chromosomach')+theme(plot.title = element_text(hjust=0.5))
+# Jeden gen moze tworzyc kilka trankryptow = wiele róznych białek
+# Są to warianty transkypcyjne tego samego genu
+
+
