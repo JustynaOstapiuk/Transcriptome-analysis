@@ -1,0 +1,50 @@
+mydata <-read.csv("C:/Users/Justyna/Desktop/STUDIA - BIOINFORMATYKA/SEMESTR II - bioinformatyka/ANALIZA TRANSKRYPTOMU/cw2_data.txt", sep = "\t", header = F)
+head(mydata)
+names(mydata)[1:4] <- c('chrom', 'start', 'stop', 'typ')
+head(mydata)
+library(ggplot2)
+ggplot(mydata, aes(x=chrom, fill=typ))+geom_bar()
+dim(mydata)
+summary(mydata)
+summary(mydata$chrom)
+summary(mydata$start)
+
+# dodanie kolumny size 
+mydata$size <- c(mydata$stop-mydata$start)
+head(mydata)
+#liczenie sredniej
+mean(mydata$size)
+#liczenie odchylenia standardowego 
+sd(mydata$size)
+ggplot(mydata, aes(x=chrom, fill=typ))+geom_bar()
+
+# usuwanie prefiksu "chr" z kolumny chr oraz zmiana typu danych na faktor
+mydata$chrom <- as.factor(substr(mydata$chrom,4,5))
+# lub drugi sposob
+mydata$chrom <- as.factor(sub('chr','',mydata$chrom))
+head(mydata)
+# sprawdzanie typu danych 
+typeof(mydata$chrom)
+# ustawienie chromosomu w w kolejnosci 1:22, X, Y
+mydata$chrom <- factor(mydata$chrom, levels = c(seq(1,22),'X','Y'))
+summary(mydata$chrom)
+ggplot(mydata, aes(x=chrom,fill=typ))+geom_bar()
+
+head(mydata$typ)
+dim(mydata)
+library(plyr)
+mydata$typ <-revalue(mydata$typ,c("1_Active_Promoter"="Promotor", "4_Strong_Enhancer"="Wzmacniacz","8_Insulator"="Izolator"))
+summary(mydata$typ)
+library(dplyr)
+filter(mydata, typ == "Promotor")
+filter(mydata, typ == "Wzmaczniacz")
+ggplot(mydata,aes(x=chrom, fill=typ== "Promotor" & "Izolator" ))+geom_bar()
+summary(mydata$typ)
+# Przefiltrowane wyniki w tabeli mydata, tak by nowa tabela zwierala wyniki 
+# tylko dla 3 kategorii: - Ac-tive_Promoter - Strong_Enhancer -Insulato
+# filtorwanie tabeli
+library(dplyr)
+select(mydata, typ)
+filter(mydata, typ == "1_Active_Promoter" & "4_Strong_Enhancer" & "8_Insulator")
+head(mydata)
+(mydata$typ)
