@@ -1,4 +1,4 @@
-# W pliku counts.txt znajdują się liczby odczytów dla poszczególnych transkryptów w trzech tkankach łubinu wąskolistnego (kwiat, liść, łodyga). 
+# W pliku counts.txt (data_3.zip) znajdują się liczby odczytów dla poszczególnych transkryptów w trzech tkankach łubinu wąskolistnego (kwiat, liść, łodyga). 
 # Należy stworzyć diagram Venna ilustrujący liczbę transkryptów wspólnych (ulegających ekspresji w dwóch lub trzech tkankach) 
 # oraz liczbę transkryptów charakterystycznych (z ekspresją tylko w danej tkance). 
 
