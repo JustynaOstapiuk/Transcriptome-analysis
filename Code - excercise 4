@@ -1,0 +1,32 @@
+# W pliku counts.txt znajdują się liczby odczytów dla poszczególnych transkryptów w trzech tkankach łubinu wąskolistnego (kwiat, liść, łodyga). 
+# Należy stworzyć diagram Venna ilustrujący liczbę transkryptów wspólnych (ulegających ekspresji w dwóch lub trzech tkankach) 
+# oraz liczbę transkryptów charakterystycznych (z ekspresją tylko w danej tkance). 
+
+data = read.table("C:/Users/Justyna/Desktop/ANALIZA TRANSKRYPTOMU/counts.txt",header=T)
+library("VennDiagram")
+
+names(data)[7:9] <- c('flower', 'stem', 'leaf')
+
+data$all_columns = data$flower + data$stem + data$leaf
+
+data$all_columns[data$all_columns == 0] = NA
+
+data[!is.na(data$all_columns),]
+
+for (i in 1:nrow(data)){
+  if((data$flower[i])!=0)
+    data$flower[i]= data$Geneid[i]
+}
+for (i in 1:nrow(data)){
+  if((data$stem[i])!=0)
+    data$stem[i]= data$Geneid[i]
+}
+
+for (i in 1:nrow(data)){
+  if((data$leaf[i])!=0)
+    data$leaf[i]= data$Geneid[i]
+}
+
+venn.diagram(list(KWIAT = data$flower, ŁODYGA = data$stem, LIŚĆ = data$leaf),
+             fill = c("blue","red","green"), cex = 1.5,
+             filename="Venn_diagram.png", imagetype = "png")
